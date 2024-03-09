@@ -9,25 +9,7 @@ from django.db.models import Count
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
-def user_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(request,
-                                username=cd['username'],
-                                password=cd['password'])
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponse('Authenticated successfully')
-                else:
-                    return HttpResponse('Disabled account')
-            else:
-                return HttpResponse('Invalid login')
-    else:
-        form = LoginForm()
-    return render(request, 'blog/account/login.html', {'form': form})
+from django.contrib.auth.decorators import login_required
 
 
 class PostListViev(ListView):
@@ -36,6 +18,7 @@ class PostListViev(ListView):
     paginate_by = 3
     template_name = 'blog/post/list.html'
 
+@login_required
 def post_list(request, tag_slug=None):
     object_list = Post.objects.all()
     tag = None
@@ -93,3 +76,12 @@ def post_detail(request, year, month, day, post):
                                                      'comment_form': comment_form,
                                                      'similar_posts': similar_posts
                                                      })
+
+
+@login_required
+def dashboard(request):
+    user=request.user
+    posts_pub=Post.objects.filter(author=user,status='published')
+    posts_draft=Post.objects.filter(author=user,status='draft')
+    return render(request,'blog/account/dashboard.html',{'posts_pub':posts_pub,
+                                                         'posts_draft':posts_draft})
