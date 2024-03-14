@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 from taggit.managers import TaggableManager
-
+from slugify import slugify
 class Post(models.Model):
     STATUS_CHOISES=(('draft','Draft'),('published','Published'),)
 
@@ -23,6 +23,10 @@ class Post(models.Model):
         ordering=('-publish',)
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        return super(Post, self).save(*args, **kwargs)
     def get_absolut_url(self):
         return reverse('blog:post_detail',args=[self.publish.year,
                                                 self.publish.month,

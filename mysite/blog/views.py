@@ -3,7 +3,7 @@ from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 from .models import Post, PostPoint
 from django.views.generic import ListView
 from .models import Comment
-from .forms import CommentForm
+from .forms import CommentForm, PostForm
 from taggit.models import Tag
 from django.db.models import Count
 from django.http import HttpResponse
@@ -11,6 +11,20 @@ from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 from django.contrib.auth.decorators import login_required
 
+@login_required
+def post_add(request):
+    user=request.user
+    if request.method=='POST':
+        form=PostForm(request.POST,request.FILES)
+        if form.is_valid():
+            post=form.save(commit=False)
+            post.author=user
+            print(post)
+            post.save()
+    else:
+        form=PostForm()
+
+    return render(request, 'blog/account/post_add.html',{'form':form})
 
 class PostListViev(ListView):
     queryset=Post.objects.all()
