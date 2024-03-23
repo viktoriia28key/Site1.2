@@ -1,9 +1,9 @@
-{% extends "blog/base_account.html" %}
+
+{% extends 'blog/base_account.html' %}
 {% load  bootstrap %}
 {% block title %}
-    Створити пост
-{% endblock title %}
-
+    Редагувати пост
+{% endblock %}
 {% block account_content %}
     <div class="container text-center sign-in">
         {% if form.errors %}
@@ -16,21 +16,21 @@
                 {{ form.image|bootstrap }}
                 {% csrf_token %}
                 <button class="btn btn-lg btn-primary mt-2" type="submit">
-                    Додати пост
+                    Зберегти зміни
                 </button>
             </form>
         {% elif form.is_valid %}
             <h1 class="h3 mb-3 font-weight-normal">
-               Пост відправлено на модерацію
+                Пост успішно змінено
             </h1>
             <h2 class="mb-3 font-weight-normal">
                 Ви можете:
             </h2>
-            <a href="{% url 'blog:dashboard' %}" class="btn btn-dark">Повернутися до списку ваших постів</a>
-            <a href="{% url 'blog:post_add' %}" class="btn btn-primary">Додати пост</a>
+            <a href="{% url 'blog:dashboard' %}" class="btn btn-dark">Повернутися до списку постів</a>
+            <a href="{% url 'blog:post_edit' post.id %} " class="btn btn-primary">Редагувати пост</a>
         {% else %}
             <h1 class="h3 mb-3 font-weight-normal">
-                Будь ласка заповніть поля
+                Заповніть поля
             </h1>
             <form action="." class="form-sign-in login-form" method="post" enctype="multipart/form-data">
                 {{ form.title|bootstrap }}
@@ -39,9 +39,9 @@
                 {{ form.image|bootstrap }}
                 {% csrf_token %}
                 <button class="btn btn-lg btn-primary mt-2" type="submit">
-                    Додати пост
+                    Сохранить изменения
                 </button>
             </form>
         {% endif %}
     </div>
-{% endblock  %}
+{% endblock %}
